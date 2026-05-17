@@ -59,7 +59,7 @@ export function FloatingParticles({ count = 30, color = "var(--moonglow)", class
             background: color,
             boxShadow: `0 0 ${p.size * 3}px ${color}`,
           }}
-          animate={{ y: [-0, -window.innerHeight - 50], opacity: [0, 1, 0] }}
+          animate={{ y: [0, -(typeof window !== "undefined" ? window.innerHeight : 800) - 50], opacity: [0, 1, 0] }}
           transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: "linear" }}
         />
       ))}
