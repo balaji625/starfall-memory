@@ -40,19 +40,19 @@ export function Scene5Name({ onDone }: { onDone: () => void }) {
     }
   }, [revealed.length, crown, onDone]);
 
+  const [touched] = useState(() => new Set<number>());
   const handleLetter = (i: number) => {
     setActive(i);
     audio.chime(440 + (i % 8) * 60);
-    const allTouched = NAME.split("").every((_, idx) => idx === i || (idx !== i && touched.has(idx)));
     touched.add(i);
-    if (touched.size >= NAME.replace(/ /g, "").length - 2) {
+    const lettersOnly = NAME.split("").filter((c) => c !== " ").length;
+    if (touched.size >= lettersOnly - 2 && !crown) {
       setCrown(true);
       audio.sparkle();
       setTimeout(onDone, 5000);
     }
     setTimeout(() => setActive(null), 2500);
   };
-  const [touched] = useState(() => new Set<number>());
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-black">
