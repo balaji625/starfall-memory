@@ -49,7 +49,9 @@ export function Scene5Name({ onDone }: { onDone: () => void }) {
     if (touched.size >= lettersOnly - 2 && !crown) {
       setCrown(true);
       audio.sparkle();
-      setTimeout(onDone, 5000);
+      // Trigger Heart Galaxy secret overlay before advancing.
+      window.dispatchEvent(new CustomEvent("secret:heart-galaxy"));
+      setTimeout(onDone, 8000);
     }
     setTimeout(() => setActive(null), 2500);
   };
