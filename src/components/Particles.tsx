@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { scaleCount, useQuality } from "@/lib/quality";
+
+function useScaled(n: number) {
+  const q = useQuality();
+  return useMemo(() => scaleCount(n, q), [n, q]);
+}
 
 export function Starfield({ count = 120, className = "" }: { count?: number; className?: string }) {
   const stars = useMemo(
