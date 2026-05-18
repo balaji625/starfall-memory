@@ -11,6 +11,7 @@ import { Scene5Name } from "./scenes/Scene5Name";
 import { Scene6FalseEnding } from "./scenes/Scene6FalseEnding";
 import { Scene7Palace } from "./scenes/Scene7Palace";
 import { SceneFinale } from "./scenes/SceneFinale";
+import { SecretOverlays } from "./SecretOverlays";
 
 type Stage = "gate" | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
@@ -77,6 +78,8 @@ export function Experience() {
           chapter {String(stage).padStart(2, "0")} / 08
         </div>
       )}
+
+      {stage !== "gate" && <SecretOverlays />}
     </div>
   );
 }
