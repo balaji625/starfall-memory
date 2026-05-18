@@ -1,17 +1,24 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { scaleCount, useQuality } from "@/lib/quality";
+
+function useScaled(n: number) {
+  const q = useQuality();
+  return useMemo(() => scaleCount(n, q), [n, q]);
+}
 
 export function Starfield({ count = 120, className = "" }: { count?: number; className?: string }) {
+  const n = useScaled(count);
   const stars = useMemo(
     () =>
-      Array.from({ length: count }, (_, i) => ({
+      Array.from({ length: n }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
         s: Math.random() * 2 + 0.5,
         d: Math.random() * 3,
       })),
-    [count],
+    [n],
   );
   return (
     <div className={`absolute inset-0 pointer-events-none ${className}`}>
@@ -34,16 +41,17 @@ export function Starfield({ count = 120, className = "" }: { count?: number; cla
 }
 
 export function FloatingParticles({ count = 30, color = "var(--moonglow)", className = "" }: { count?: number; color?: string; className?: string }) {
+  const n = useScaled(count);
   const items = useMemo(
     () =>
-      Array.from({ length: count }, (_, i) => ({
+      Array.from({ length: n }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         delay: Math.random() * 8,
         dur: 8 + Math.random() * 8,
         size: Math.random() * 4 + 2,
       })),
-    [count],
+    [n],
   );
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
@@ -68,9 +76,10 @@ export function FloatingParticles({ count = 30, color = "var(--moonglow)", class
 }
 
 export function Petals({ count = 18, className = "" }: { count?: number; className?: string }) {
+  const n = useScaled(count);
   const items = useMemo(
     () =>
-      Array.from({ length: count }, (_, i) => ({
+      Array.from({ length: n }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         delay: Math.random() * 10,
@@ -78,7 +87,7 @@ export function Petals({ count = 18, className = "" }: { count?: number; classNa
         rot: Math.random() * 360,
         scale: 0.5 + Math.random() * 0.8,
       })),
-    [count],
+    [n],
   );
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { startQualityMonitor } from "@/lib/quality";
 import { audio } from "@/lib/audio";
 import { Moon } from "./Moon";
 import { Starfield, FloatingParticles } from "./Particles";
@@ -28,6 +29,7 @@ export function Experience() {
   const next = (n: Stage) => setStage(n);
 
   useEffect(() => {
+    startQualityMonitor();
     audio.setMuted(muted);
   }, [muted]);
 
