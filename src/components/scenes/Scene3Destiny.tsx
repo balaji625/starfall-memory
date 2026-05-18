@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Character, Boy } from "../Character";
 import { Moon } from "../Moon";
 import { Starfield, FloatingParticles, Petals, StarBurst } from "../Particles";
@@ -10,18 +10,28 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
   // 0 date, 1 walking towards, 2 eye contact, 3 handshake, 4 burst, 5 quote, 6 done
   const [burst, setBurst] = useState(false);
   const [replays, setReplays] = useState(0);
+  const doneRef = useRef(onDone);
+  doneRef.current = onDone;
+  const completedRef = useRef(false);
 
   useEffect(() => {
+    // Run the cinematic timeline ONCE. Completion lock prevents re-trigger / loop.
+    if (completedRef.current) return;
     const t: any[] = [];
-    const beat = setInterval(() => audio.heartbeat(0.5 + stage * 0.15), Math.max(1200 - stage * 200, 500));
+    const beat = setInterval(() => audio.heartbeat(0.8), 900);
     t.push(setTimeout(() => setStage(1), 2200));
     t.push(setTimeout(() => setStage(2), 5500));
     t.push(setTimeout(() => { setStage(3); audio.chime(880); }, 8200));
     t.push(setTimeout(() => { setStage(4); setBurst(true); audio.sparkle(); }, 9000));
     t.push(setTimeout(() => setStage(5), 11000));
-    t.push(setTimeout(() => onDone(), 15500));
+    t.push(setTimeout(() => {
+      if (completedRef.current) return;
+      completedRef.current = true;
+      doneRef.current();
+    }, 15500));
     return () => { t.forEach(clearTimeout); clearInterval(beat); };
-  }, [stage, onDone]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const triggerReplay = () => {
     setReplays((r) => r + 1);
