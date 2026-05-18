@@ -16,7 +16,9 @@ const VARIANTS = [
 export function SceneFinale({ onReplay, variant }: { onReplay: () => void; variant: number }) {
   const v = VARIANTS[variant % VARIANTS.length];
   const [stage, setStage] = useState(0);
-  // 0 stars→memories merge, 1 girl turns, 2 line1, 3 line2, 4 black, 5 explosion, 6 "My World", 7 name, 8 "one more thing", 9 happy birthday, 10 infinite
+  // 0..10 main timeline · 11 = secret-ending overlay (girl turns + walks closer + whispers)
+  const [secretEnding, setSecretEnding] = useState<0 | 1 | 2 | 3>(0);
+  // 1 = quiet pause, 2 = girl turns + walks closer, 3 = whisper revealed
 
   useEffect(() => {
     const steps = [800, 3200, 5800, 8800, 11500, 12500, 14500, 17000, 20000, 22500, 25500];
@@ -29,6 +31,15 @@ export function SceneFinale({ onReplay, variant }: { onReplay: () => void; varia
     }, ms));
     return () => timers.forEach(clearTimeout);
   }, []);
+
+  // Secret ending — wait 5s after finale fully resolves, then play the closer.
+  useEffect(() => {
+    if (stage < 10) return;
+    const t1 = setTimeout(() => { setSecretEnding(1); }, 5000);                   // 5s held silence
+    const t2 = setTimeout(() => { setSecretEnding(2); audio.heartbeat(1.5); }, 7000); // she turns + walks
+    const t3 = setTimeout(() => { setSecretEnding(3); audio.chime(523); audio.sparkle(); }, 12500); // whisper
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [stage]);
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-black">
@@ -119,7 +130,7 @@ export function SceneFinale({ onReplay, variant }: { onReplay: () => void; varia
         </motion.div>
       )}
 
-      {stage >= 10 && (
+      {stage >= 10 && secretEnding < 2 && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -130,6 +141,80 @@ export function SceneFinale({ onReplay, variant }: { onReplay: () => void; varia
           watch again · new memory
         </motion.button>
       )}
+
+      {/* SECRET ENDING — wait 5s, girl turns back, smiles, walks closer, whispers */}
+      <AnimatePresence>
+        {secretEnding >= 2 && (
+          <motion.div
+            key="secret-ending"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 2 }}
+            className="absolute inset-0 z-30 overflow-hidden"
+            style={{ background: "radial-gradient(ellipse at center, oklch(0.08 0.04 280 / 0.96), black)" }}
+          >
+            <Starfield count={200} />
+            <FloatingParticles count={30} />
+
+            {/* Girl turns and walks closer — scale + slight rotate sells the "turn back, walk to camera" */}
+            <motion.div
+              className="absolute left-1/2 bottom-0 -translate-x-1/2 origin-bottom"
+              initial={{ scale: 0.8, opacity: 0, rotateY: 180 }}
+              animate={{
+                scale: secretEnding >= 3 ? 1.8 : 1.1,
+                opacity: 1,
+                rotateY: 0,
+                y: secretEnding >= 3 ? -20 : 0,
+              }}
+              transition={{ duration: 4, ease: [0.16, 0.84, 0.32, 1] }}
+            >
+              <Character age="woman" facing="front" scale={1.2} />
+              {/* soft smile glow */}
+              <motion.div
+                className="absolute left-1/2 top-1/3 -translate-x-1/2 w-32 h-32 rounded-full pointer-events-none"
+                animate={{ opacity: [0.2, 0.6, 0.2] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                style={{ background: "radial-gradient(circle, oklch(0.95 0.15 85 / 0.5), transparent 70%)", filter: "blur(20px)" }}
+              />
+            </motion.div>
+
+            {/* Whisper */}
+            <AnimatePresence>
+              {secretEnding >= 3 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 30, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 3, ease: "easeOut" }}
+                  className="absolute top-[14%] inset-x-0 text-center px-8"
+                >
+                  <div className="font-display text-[10px] tracking-[0.6em] text-white/40 mb-3">
+                    THE LAST SECRET
+                  </div>
+                  <div
+                    className="font-script text-3xl md:text-5xl text-[oklch(0.95_0.15_85)] max-w-2xl mx-auto leading-tight"
+                    style={{ textShadow: "0 0 40px oklch(0.95 0.18 85 / 0.9)" }}
+                  >
+                    "{v.final}"
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {secretEnding >= 3 && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 4 }}
+                onClick={onReplay}
+                className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 px-8 py-3 rounded-full font-display text-sm tracking-[0.3em] border border-[oklch(0.95_0.15_85)] text-[oklch(0.95_0.15_85)] bg-black/40 backdrop-blur hover:bg-[oklch(0.95_0.15_85)] hover:text-black transition-colors"
+              >
+                ONE MORE MEMORY
+              </motion.button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
