@@ -6,11 +6,11 @@ import { Moon } from "../Moon";
 import { audio } from "@/lib/audio";
 
 const VARIANTS = [
-  { l1: "28 May gave the world someone...", l2: "10 June gave someone his world...", core: "My World...", name: "Vijaya ❤️", more: "Oh… one more thing…" },
-  { l1: "On 28 May the moon learned a new name...", l2: "On 10 June the moon gave it to me...", core: "My Universe...", name: "Vijaya ❤️", more: "Wait — one more secret…" },
-  { l1: "28 May — the stars rehearsed...", l2: "10 June — the curtain finally rose...", core: "My Always...", name: "Vijaya ❤️", more: "One more whisper before I go…" },
-  { l1: "28 May wrote the first line...", l2: "10 June became the whole story...", core: "My Forever...", name: "Vijaya ❤️", more: "And one final thing…" },
-  { l1: "Before 28 May, the world was waiting...", l2: "After 10 June, the world was mine...", core: "My Everything...", name: "Vijaya ❤️", more: "P.S. you should know…" },
+  { l1: "28 May gave the world someone...", l2: "10 June gave someone his world...", core: "My World...", name: "Vijaya ❤️", more: "Oh… one more thing…", final: "you were never the gift i wanted — you were the one i was made for." },
+  { l1: "On 28 May the moon learned a new name...", l2: "On 10 June the moon gave it to me...", core: "My Universe...", name: "Vijaya ❤️", more: "Wait — one more secret…", final: "if every life is a song, you are the one note i'd never let end." },
+  { l1: "28 May — the stars rehearsed...", l2: "10 June — the curtain finally rose...", core: "My Always...", name: "Vijaya ❤️", more: "One more whisper before I go…", final: "i don't pray for forever — i pray every forever has you in it." },
+  { l1: "28 May wrote the first line...", l2: "10 June became the whole story...", core: "My Forever...", name: "Vijaya ❤️", more: "And one final thing…", final: "of all the stories the world told me, yours is the only one i believe." },
+  { l1: "Before 28 May, the world was waiting...", l2: "After 10 June, the world was mine...", core: "My Everything...", name: "Vijaya ❤️", more: "P.S. you should know…", final: "even when the stars run out of light — i'd find you. i'd always find you." },
 ];
 
 export function SceneFinale({ onReplay, variant }: { onReplay: () => void; variant: number }) {
