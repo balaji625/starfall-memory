@@ -133,6 +133,7 @@ export function Experience() {
       )}
 
       {stage !== "gate" && <SecretOverlays />}
+      {stage !== "gate" && <MemoryReel unlocked={unlocked} variant={replay} />}
     </div>
   );
 }
