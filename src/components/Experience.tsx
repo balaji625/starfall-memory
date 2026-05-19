@@ -33,13 +33,20 @@ export function Experience() {
   const [stage, setStage] = useState<Stage>("gate");
   const [muted, setMuted] = useState(false);
   const [replay, setReplay] = useState(0);
+  const [unlocked, setUnlocked] = useState<Set<MemoryId>>(new Set());
+
+  const unlock = (id: MemoryId) =>
+    setUnlocked((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
 
   const start = () => {
     audio.unlock();
     setStage(1);
   };
 
-  const next = (n: Stage) => setStage(n);
+  const next = (from: MemoryId, n: Stage) => {
+    unlock(from);
+    setStage(n);
+  };
 
   useEffect(() => {
     startQualityMonitor();
@@ -47,6 +54,7 @@ export function Experience() {
   }, [muted]);
 
   const restart = () => {
+    unlock(8);
     setReplay((r) => r + 1);
     setStage(1);
   };
