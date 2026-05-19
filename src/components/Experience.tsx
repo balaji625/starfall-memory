@@ -50,8 +50,17 @@ export function Experience() {
     setStage(1);
   };
 
+  const chapter = useChapterCard(stage, CHAPTERS);
+
   return (
-    <div className="fixed inset-0 select-none">
+    <div className="fixed inset-0 select-none overflow-hidden">
+      {/* Aurora atmosphere — sits behind everything */}
+      {stage !== "gate" && (
+        <div className="pointer-events-none absolute inset-0 z-[1]">
+          <div className="aurora-bg absolute inset-0" />
+        </div>
+      )}
+
       <AnimatePresence mode="wait">
         {stage === "gate" && <Gate key="gate" onStart={start} />}
         {stage === 1 && <Scene1Birth key={`s1-${replay}`} variant={replay % 3} onDone={() => next(2)} />}
@@ -63,6 +72,27 @@ export function Experience() {
         {stage === 7 && <Scene7Palace key={`s7-${replay}`} variant={replay} onDone={() => next(8)} />}
         {stage === 8 && <SceneFinale key={`s8-${replay}`} variant={replay} onReplay={restart} />}
       </AnimatePresence>
+
+      {/* Cinematic atmosphere layers — non-interactive, above scenes */}
+      {stage !== "gate" && (
+        <>
+          <Parallax3D intensity={10}>
+            <GodRays origin="50% 25%" />
+            <LensFlare x={72} y={28} />
+          </Parallax3D>
+          <FilmGrain />
+        </>
+      )}
+
+      {/* Chapter card transitions */}
+      {chapter.data && (
+        <ChapterCard
+          index={typeof stage === "number" ? stage : 0}
+          title={chapter.data.t}
+          subtitle={chapter.data.s}
+          visible={chapter.visible}
+        />
+      )}
 
       {/* HUD */}
       {stage !== "gate" && (
@@ -97,6 +127,7 @@ export function Experience() {
     </div>
   );
 }
+
 
 function Gate({ onStart }: { onStart: () => void }) {
   return (
