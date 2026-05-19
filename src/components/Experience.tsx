@@ -14,6 +14,7 @@ import { Scene7Palace } from "./scenes/Scene7Palace";
 import { SceneFinale } from "./scenes/SceneFinale";
 import { SecretOverlays } from "./SecretOverlays";
 import { ChapterCard, FilmGrain, GodRays, LensFlare, Parallax3D, useChapterCard } from "./Cinematic3D";
+import { MemoryReel, type MemoryId } from "./MemoryReel";
 
 type Stage = "gate" | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
