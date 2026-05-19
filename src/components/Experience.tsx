@@ -14,6 +14,7 @@ import { Scene7Palace } from "./scenes/Scene7Palace";
 import { SceneFinale } from "./scenes/SceneFinale";
 import { SecretOverlays } from "./SecretOverlays";
 import { ChapterCard, FilmGrain, GodRays, LensFlare, Parallax3D, useChapterCard } from "./Cinematic3D";
+import { MemoryReel, type MemoryId } from "./MemoryReel";
 
 type Stage = "gate" | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
@@ -32,13 +33,20 @@ export function Experience() {
   const [stage, setStage] = useState<Stage>("gate");
   const [muted, setMuted] = useState(false);
   const [replay, setReplay] = useState(0);
+  const [unlocked, setUnlocked] = useState<Set<MemoryId>>(new Set());
+
+  const unlock = (id: MemoryId) =>
+    setUnlocked((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
 
   const start = () => {
     audio.unlock();
     setStage(1);
   };
 
-  const next = (n: Stage) => setStage(n);
+  const next = (from: MemoryId, n: Stage) => {
+    unlock(from);
+    setStage(n);
+  };
 
   useEffect(() => {
     startQualityMonitor();
@@ -46,6 +54,7 @@ export function Experience() {
   }, [muted]);
 
   const restart = () => {
+    unlock(8);
     setReplay((r) => r + 1);
     setStage(1);
   };
@@ -63,13 +72,13 @@ export function Experience() {
 
       <AnimatePresence mode="wait">
         {stage === "gate" && <Gate key="gate" onStart={start} />}
-        {stage === 1 && <Scene1Birth key={`s1-${replay}`} variant={replay % 3} onDone={() => next(2)} />}
-        {stage === 2 && <Scene2Growing key={`s2-${replay}`} onDone={() => next(3)} />}
-        {stage === 3 && <Scene3Destiny key={`s3-${replay}`} onDone={() => next(4)} />}
-        {stage === 4 && <Scene4Journey key={`s4-${replay}`} onDone={() => next(5)} />}
-        {stage === 5 && <Scene5Name key={`s5-${replay}`} onDone={() => next(6)} />}
-        {stage === 6 && <Scene6FalseEnding key={`s6-${replay}`} onDone={() => next(7)} />}
-        {stage === 7 && <Scene7Palace key={`s7-${replay}`} variant={replay} onDone={() => next(8)} />}
+        {stage === 1 && <Scene1Birth key={`s1-${replay}`} variant={replay % 3} onDone={() => next(1, 2)} />}
+        {stage === 2 && <Scene2Growing key={`s2-${replay}`} onDone={() => next(2, 3)} />}
+        {stage === 3 && <Scene3Destiny key={`s3-${replay}`} onDone={() => next(3, 4)} />}
+        {stage === 4 && <Scene4Journey key={`s4-${replay}`} onDone={() => next(4, 5)} />}
+        {stage === 5 && <Scene5Name key={`s5-${replay}`} onDone={() => next(5, 6)} />}
+        {stage === 6 && <Scene6FalseEnding key={`s6-${replay}`} onDone={() => next(6, 7)} />}
+        {stage === 7 && <Scene7Palace key={`s7-${replay}`} variant={replay} onDone={() => next(7, 8)} />}
         {stage === 8 && <SceneFinale key={`s8-${replay}`} variant={replay} onReplay={restart} />}
       </AnimatePresence>
 
@@ -124,6 +133,7 @@ export function Experience() {
       )}
 
       {stage !== "gate" && <SecretOverlays />}
+      {stage !== "gate" && <MemoryReel unlocked={unlocked} variant={replay} />}
     </div>
   );
 }
