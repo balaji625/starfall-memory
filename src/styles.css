@@ -147,3 +147,19 @@
 .anim-moon-pulse { animation: moon-pulse 5s ease-in-out infinite; }
 .anim-camera { animation: camera-pan 24s ease-in-out infinite alternate; }
 .anim-spin-slow { animation: spin-slow 60s linear infinite; }
+
+@keyframes rays-shimmer { 0%,100% { opacity: 0.55; transform: rotate(-2deg); } 50% { opacity: 0.85; transform: rotate(2deg); } }
+@keyframes grain-shift { 0%{transform:translate(0,0)} 25%{transform:translate(-4%,3%)} 50%{transform:translate(3%,-2%)} 75%{transform:translate(-2%,4%)} 100%{transform:translate(2%,-3%)} }
+@keyframes aurora-flow { 0%,100%{transform:translate(-10%,0) scale(1.2)} 50%{transform:translate(10%,-4%) scale(1.35)} }
+
+.aurora-bg {
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%, oklch(0.65 0.18 200 / 0.35), transparent 70%),
+    radial-gradient(ellipse 50% 35% at 80% 20%, oklch(0.7 0.2 320 / 0.3), transparent 70%),
+    radial-gradient(ellipse 70% 45% at 50% 80%, oklch(0.6 0.18 160 / 0.25), transparent 70%);
+  filter: blur(20px);
+  animation: aurora-flow 18s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+[data-quality="low"] .aurora-bg { animation: none; filter: blur(10px); opacity: 0.5; }
+[data-quality="low"] .anim-twinkle, [data-quality="low"] .anim-moon-pulse { animation-duration: 8s; }

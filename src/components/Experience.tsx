@@ -13,8 +13,20 @@ import { Scene6FalseEnding } from "./scenes/Scene6FalseEnding";
 import { Scene7Palace } from "./scenes/Scene7Palace";
 import { SceneFinale } from "./scenes/SceneFinale";
 import { SecretOverlays } from "./SecretOverlays";
+import { ChapterCard, FilmGrain, GodRays, LensFlare, Parallax3D, useChapterCard } from "./Cinematic3D";
 
 type Stage = "gate" | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
+const CHAPTERS: Record<string, { t: string; s?: string }> = {
+  "1": { t: "A Soul Arrives", s: "the night the stars learned her name" },
+  "2": { t: "She Grows", s: "swipe to let time breathe" },
+  "3": { t: "Destiny Walks In", s: "two paths · one moon" },
+  "4": { t: "The Journey", s: "every step written in starlight" },
+  "5": { t: "Her Name", s: "touch each letter · find its meaning" },
+  "6": { t: "The False Ending", s: "stay · the story is not over" },
+  "7": { t: "The Secret Palace", s: "where memory becomes light" },
+  "8": { t: "Forever", s: "happy birthday, Vijaya" },
+};
 
 export function Experience() {
   const [stage, setStage] = useState<Stage>("gate");
