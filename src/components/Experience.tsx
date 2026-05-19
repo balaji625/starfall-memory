@@ -72,13 +72,13 @@ export function Experience() {
 
       <AnimatePresence mode="wait">
         {stage === "gate" && <Gate key="gate" onStart={start} />}
-        {stage === 1 && <Scene1Birth key={`s1-${replay}`} variant={replay % 3} onDone={() => next(2)} />}
-        {stage === 2 && <Scene2Growing key={`s2-${replay}`} onDone={() => next(3)} />}
-        {stage === 3 && <Scene3Destiny key={`s3-${replay}`} onDone={() => next(4)} />}
-        {stage === 4 && <Scene4Journey key={`s4-${replay}`} onDone={() => next(5)} />}
-        {stage === 5 && <Scene5Name key={`s5-${replay}`} onDone={() => next(6)} />}
-        {stage === 6 && <Scene6FalseEnding key={`s6-${replay}`} onDone={() => next(7)} />}
-        {stage === 7 && <Scene7Palace key={`s7-${replay}`} variant={replay} onDone={() => next(8)} />}
+        {stage === 1 && <Scene1Birth key={`s1-${replay}`} variant={replay % 3} onDone={() => next(1, 2)} />}
+        {stage === 2 && <Scene2Growing key={`s2-${replay}`} onDone={() => next(2, 3)} />}
+        {stage === 3 && <Scene3Destiny key={`s3-${replay}`} onDone={() => next(3, 4)} />}
+        {stage === 4 && <Scene4Journey key={`s4-${replay}`} onDone={() => next(4, 5)} />}
+        {stage === 5 && <Scene5Name key={`s5-${replay}`} onDone={() => next(5, 6)} />}
+        {stage === 6 && <Scene6FalseEnding key={`s6-${replay}`} onDone={() => next(6, 7)} />}
+        {stage === 7 && <Scene7Palace key={`s7-${replay}`} variant={replay} onDone={() => next(7, 8)} />}
         {stage === 8 && <SceneFinale key={`s8-${replay}`} variant={replay} onReplay={restart} />}
       </AnimatePresence>
 
