@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Starfield } from "../Particles";
 import { audio } from "@/lib/audio";
 
@@ -58,37 +58,52 @@ export function Scene5Name({ onDone }: { onDone: () => void }) {
       <Starfield count={250} />
 
       <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
-        <div className="font-display text-xs uppercase tracking-[0.5em] text-white/40 mb-6">touch every letter</div>
+        <div className="font-display text-xs uppercase tracking-[0.5em] text-white/40 mb-6">touch every letter · discover its secret</div>
         <div className="flex flex-wrap justify-center gap-1 md:gap-2 max-w-4xl">
           {NAME.split("").map((ch, i) => {
             if (ch === " ") return <div key={i} className="w-4 md:w-8" />;
-            const isRevealed = revealed.includes(i);
             return (
               <motion.button
                 key={i}
                 onClick={() => handleLetter(i)}
-                initial={{ y: -200, opacity: 0, scale: 0 }}
-                animate={isRevealed ? { y: 0, opacity: 1, scale: 1 } : {}}
-                whileHover={{ scale: 1.15, color: "oklch(0.95 0.15 85)" }}
-                transition={{ type: "spring", damping: 12, stiffness: 100 }}
+                animate={active === i ? { scale: [1, 1.35, 1.15], y: [0, -8, 0] } : { scale: 1, y: 0 }}
+                whileHover={{ scale: 1.12, color: "oklch(0.95 0.15 85)" }}
+                transition={{ duration: active === i ? 0.9 : 0.3, ease: "easeOut" }}
                 className="font-display text-4xl md:text-7xl text-shimmer cursor-pointer relative"
-                style={{ filter: active === i ? "drop-shadow(0 0 30px oklch(0.95 0.15 85))" : undefined }}
+                style={{ filter: active === i ? "drop-shadow(0 0 40px oklch(0.95 0.18 85))" : undefined }}
               >
                 {ch}
-                {active === i && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: -40 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute left-1/2 -translate-x-1/2 -top-12 font-script text-base md:text-xl text-[oklch(0.95_0.1_85)] whitespace-nowrap pointer-events-none"
-                  >
-                    {MEANINGS[ch] ?? "yours"}
-                  </motion.div>
-                )}
+                <AnimatePresence>
+                  {active === i && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 12, scale: 0.9 }}
+                      animate={{ opacity: 1, y: -60, scale: 1 }}
+                      exit={{ opacity: 0, y: -80 }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className="absolute left-1/2 -translate-x-1/2 -top-4 font-script text-base md:text-2xl text-[oklch(0.97_0.12_85)] whitespace-nowrap pointer-events-none z-30 px-3 py-1 rounded-full bg-black/60 backdrop-blur"
+                      style={{ textShadow: "0 0 20px oklch(0.95 0.18 85 / 0.8)" }}
+                    >
+                      {meaningFor(ch)}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.button>
             );
           })}
         </div>
+
+        {touchedCount >= 3 && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            onClick={() => { audio.chime(660); onDone(); }}
+            whileHover={{ scale: 1.05 }}
+            className="mt-16 px-10 py-3 rounded-full font-display tracking-[0.4em] text-xs bg-[oklch(0.95_0.15_85)] text-black hover:bg-white"
+          >
+            ✨ CONTINUE ✨
+          </motion.button>
+        )}
       </div>
 
       <AnimatePresence>
