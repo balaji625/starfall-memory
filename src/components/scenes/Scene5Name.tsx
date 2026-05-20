@@ -1,59 +1,56 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Starfield } from "../Particles";
 import { audio } from "@/lib/audio";
 
 const NAME = "KONDREDDY VIJAYA";
-const MEANINGS: Record<string, string> = {
-  K: "Kindness that the world remembers",
-  O: "Open heart, always",
-  N: "Never alone — not while I breathe",
-  D: "Devotion, written in moonlight",
-  R: "Reason every flower blooms",
-  E: "Endless — that is how I love you",
-  Y: "Yours — every star, every silence",
-  V: "Victory of softness over the world",
-  I: "Infinite — like the night sky",
-  J: "Joy I never knew I was missing",
-  A: "Always — and I mean it",
-  " ": "·",
+// Repeated letters cycle through multiple meanings — each click feels new.
+const MEANINGS: Record<string, string[]> = {
+  K: ["✨ Kind hearts are rare — and yours quietly heals people.", "🌟 Kindness like yours rewrites the room you walk into."],
+  O: ["🌙 One smile from you can make someone's whole day lighter.", "🌊 Open skies look small next to the way you love."],
+  N: ["💫 Not everyone leaves memories — some become memories.", "🌌 Near you, even silence feels like a song."],
+  D: ["🌸 Dreams feel softer around you.", "🤍 Deep down, you are everyone's safe place."],
+  R: ["🤍 Rare souls make people feel safe without trying.", "🌹 Real beauty is what you are when no one is watching."],
+  E: ["🌌 Even silence feels beautiful beside you.", "💗 Every ordinary moment turns warm when you arrive."],
+  Y: ["💖 Yours — every star, every silence, every season.", "🕊 You are the kind of person poems try to describe."],
+  V: ["🫶 Very few people make life feel warm naturally.", "🌷 Velvet kindness — that's what your soul is made of."],
+  I: ["🌠 In some lives, certain people become unforgettable.", "✨ I would recognise your light in any lifetime."],
+  J: ["🎈 Joy feels more real around you.", "🌻 Just being near you feels like coming home."],
+  A: ["💖 A heart like yours deserves endless happiness.", "🌼 And of all things the universe made — you are my favourite."],
+  " ": ["·"],
 };
 
 export function Scene5Name({ onDone }: { onDone: () => void }) {
-  const [revealed, setRevealed] = useState<number[]>([]);
   const [active, setActive] = useState<number | null>(null);
   const [crown, setCrown] = useState(false);
-
-  useEffect(() => {
-    NAME.split("").forEach((_, i) => {
-      setTimeout(() => setRevealed((r) => [...r, i]), i * 250);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (revealed.length === NAME.length) {
-      const t = setTimeout(() => {
-        // auto-advance if user doesn't tap
-        if (!crown) onDone();
-      }, 14000);
-      return () => clearTimeout(t);
-    }
-  }, [revealed.length, crown, onDone]);
+  const [touchedCount, setTouchedCount] = useState(0);
 
   const [touched] = useState(() => new Set<number>());
+  const [seen] = useState(() => new Map<string, number>());
+
+  const meaningFor = (ch: string) => {
+    const list = MEANINGS[ch] ?? ["yours"];
+    const idx = (seen.get(ch) ?? 0) % list.length;
+    return list[idx];
+  };
+
   const handleLetter = (i: number) => {
+    const ch = NAME[i];
     setActive(i);
     audio.chime(440 + (i % 8) * 60);
-    touched.add(i);
+    audio.sparkle();
+    seen.set(ch, (seen.get(ch) ?? 0) + 1);
+    if (!touched.has(i)) {
+      touched.add(i);
+      setTouchedCount(touched.size);
+    }
     const lettersOnly = NAME.split("").filter((c) => c !== " ").length;
     if (touched.size >= lettersOnly - 2 && !crown) {
       setCrown(true);
       audio.sparkle();
-      // Trigger Heart Galaxy secret overlay before advancing.
       window.dispatchEvent(new CustomEvent("secret:heart-galaxy"));
-      setTimeout(onDone, 8000);
     }
-    setTimeout(() => setActive(null), 2500);
+    setTimeout(() => setActive(null), 3000);
   };
 
   return (
@@ -61,37 +58,52 @@ export function Scene5Name({ onDone }: { onDone: () => void }) {
       <Starfield count={250} />
 
       <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
-        <div className="font-display text-xs uppercase tracking-[0.5em] text-white/40 mb-6">touch every letter</div>
+        <div className="font-display text-xs uppercase tracking-[0.5em] text-white/40 mb-6">touch every letter · discover its secret</div>
         <div className="flex flex-wrap justify-center gap-1 md:gap-2 max-w-4xl">
           {NAME.split("").map((ch, i) => {
             if (ch === " ") return <div key={i} className="w-4 md:w-8" />;
-            const isRevealed = revealed.includes(i);
             return (
               <motion.button
                 key={i}
                 onClick={() => handleLetter(i)}
-                initial={{ y: -200, opacity: 0, scale: 0 }}
-                animate={isRevealed ? { y: 0, opacity: 1, scale: 1 } : {}}
-                whileHover={{ scale: 1.15, color: "oklch(0.95 0.15 85)" }}
-                transition={{ type: "spring", damping: 12, stiffness: 100 }}
+                animate={active === i ? { scale: [1, 1.35, 1.15], y: [0, -8, 0] } : { scale: 1, y: 0 }}
+                whileHover={{ scale: 1.12, color: "oklch(0.95 0.15 85)" }}
+                transition={{ duration: active === i ? 0.9 : 0.3, ease: "easeOut" }}
                 className="font-display text-4xl md:text-7xl text-shimmer cursor-pointer relative"
-                style={{ filter: active === i ? "drop-shadow(0 0 30px oklch(0.95 0.15 85))" : undefined }}
+                style={{ filter: active === i ? "drop-shadow(0 0 40px oklch(0.95 0.18 85))" : undefined }}
               >
                 {ch}
-                {active === i && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: -40 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute left-1/2 -translate-x-1/2 -top-12 font-script text-base md:text-xl text-[oklch(0.95_0.1_85)] whitespace-nowrap pointer-events-none"
-                  >
-                    {MEANINGS[ch] ?? "yours"}
-                  </motion.div>
-                )}
+                <AnimatePresence>
+                  {active === i && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 12, scale: 0.9 }}
+                      animate={{ opacity: 1, y: -60, scale: 1 }}
+                      exit={{ opacity: 0, y: -80 }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className="absolute left-1/2 -translate-x-1/2 -top-4 font-script text-base md:text-2xl text-[oklch(0.97_0.12_85)] whitespace-nowrap pointer-events-none z-30 px-3 py-1 rounded-full bg-black/60 backdrop-blur"
+                      style={{ textShadow: "0 0 20px oklch(0.95 0.18 85 / 0.8)" }}
+                    >
+                      {meaningFor(ch)}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.button>
             );
           })}
         </div>
+
+        {touchedCount >= 3 && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            onClick={() => { audio.chime(660); onDone(); }}
+            whileHover={{ scale: 1.05 }}
+            className="mt-16 px-10 py-3 rounded-full font-display tracking-[0.4em] text-xs bg-[oklch(0.95_0.15_85)] text-black hover:bg-white"
+          >
+            ✨ CONTINUE ✨
+          </motion.button>
+        )}
       </div>
 
       <AnimatePresence>
