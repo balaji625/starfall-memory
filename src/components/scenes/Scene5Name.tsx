@@ -4,56 +4,53 @@ import { Starfield } from "../Particles";
 import { audio } from "@/lib/audio";
 
 const NAME = "KONDREDDY VIJAYA";
-const MEANINGS: Record<string, string> = {
-  K: "Kindness that the world remembers",
-  O: "Open heart, always",
-  N: "Never alone — not while I breathe",
-  D: "Devotion, written in moonlight",
-  R: "Reason every flower blooms",
-  E: "Endless — that is how I love you",
-  Y: "Yours — every star, every silence",
-  V: "Victory of softness over the world",
-  I: "Infinite — like the night sky",
-  J: "Joy I never knew I was missing",
-  A: "Always — and I mean it",
-  " ": "·",
+// Repeated letters cycle through multiple meanings — each click feels new.
+const MEANINGS: Record<string, string[]> = {
+  K: ["✨ Kind hearts are rare — and yours quietly heals people.", "🌟 Kindness like yours rewrites the room you walk into."],
+  O: ["🌙 One smile from you can make someone's whole day lighter.", "🌊 Open skies look small next to the way you love."],
+  N: ["💫 Not everyone leaves memories — some become memories.", "🌌 Near you, even silence feels like a song."],
+  D: ["🌸 Dreams feel softer around you.", "🤍 Deep down, you are everyone's safe place."],
+  R: ["🤍 Rare souls make people feel safe without trying.", "🌹 Real beauty is what you are when no one is watching."],
+  E: ["🌌 Even silence feels beautiful beside you.", "💗 Every ordinary moment turns warm when you arrive."],
+  Y: ["💖 Yours — every star, every silence, every season.", "🕊 You are the kind of person poems try to describe."],
+  V: ["🫶 Very few people make life feel warm naturally.", "🌷 Velvet kindness — that's what your soul is made of."],
+  I: ["🌠 In some lives, certain people become unforgettable.", "✨ I would recognise your light in any lifetime."],
+  J: ["🎈 Joy feels more real around you.", "🌻 Just being near you feels like coming home."],
+  A: ["💖 A heart like yours deserves endless happiness.", "🌼 And of all things the universe made — you are my favourite."],
+  " ": ["·"],
 };
 
 export function Scene5Name({ onDone }: { onDone: () => void }) {
-  const [revealed, setRevealed] = useState<number[]>([]);
   const [active, setActive] = useState<number | null>(null);
   const [crown, setCrown] = useState(false);
-
-  useEffect(() => {
-    NAME.split("").forEach((_, i) => {
-      setTimeout(() => setRevealed((r) => [...r, i]), i * 250);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (revealed.length === NAME.length) {
-      const t = setTimeout(() => {
-        // auto-advance if user doesn't tap
-        if (!crown) onDone();
-      }, 14000);
-      return () => clearTimeout(t);
-    }
-  }, [revealed.length, crown, onDone]);
+  const [touchedCount, setTouchedCount] = useState(0);
 
   const [touched] = useState(() => new Set<number>());
+  const [seen] = useState(() => new Map<string, number>());
+
+  const meaningFor = (ch: string) => {
+    const list = MEANINGS[ch] ?? ["yours"];
+    const idx = (seen.get(ch) ?? 0) % list.length;
+    return list[idx];
+  };
+
   const handleLetter = (i: number) => {
+    const ch = NAME[i];
     setActive(i);
     audio.chime(440 + (i % 8) * 60);
-    touched.add(i);
+    audio.sparkle();
+    seen.set(ch, (seen.get(ch) ?? 0) + 1);
+    if (!touched.has(i)) {
+      touched.add(i);
+      setTouchedCount(touched.size);
+    }
     const lettersOnly = NAME.split("").filter((c) => c !== " ").length;
     if (touched.size >= lettersOnly - 2 && !crown) {
       setCrown(true);
       audio.sparkle();
-      // Trigger Heart Galaxy secret overlay before advancing.
       window.dispatchEvent(new CustomEvent("secret:heart-galaxy"));
-      setTimeout(onDone, 8000);
     }
-    setTimeout(() => setActive(null), 2500);
+    setTimeout(() => setActive(null), 3000);
   };
 
   return (
