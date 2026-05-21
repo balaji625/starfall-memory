@@ -15,6 +15,7 @@ import { SceneFinale } from "./scenes/SceneFinale";
 import { SecretOverlays } from "./SecretOverlays";
 import { ChapterCard, FilmGrain, GodRays, LensFlare, Parallax3D, useChapterCard } from "./Cinematic3D";
 import { MemoryReel, type MemoryId } from "./MemoryReel";
+import { WowMoments, DestinyDateCard } from "./WowMoments";
 
 type Stage = "gate" | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
@@ -134,6 +135,8 @@ export function Experience() {
 
       {stage !== "gate" && <SecretOverlays />}
       {stage !== "gate" && <MemoryReel unlocked={unlocked} variant={replay} />}
+      {stage !== "gate" && <WowMoments stage={stage} />}
+      {stage === 3 && <DestinyDateCard />}
     </div>
   );
 }
