@@ -215,6 +215,49 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
         </div>
       )}
 
+      {/* WOW — moonlight beam falling between the two characters once they stop */}
+      {stage >= 2 && stage <= 5 && (
+        <motion.div
+          className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none z-[15]"
+          initial={{ opacity: 0, scaleY: 0.4 }}
+          animate={{ opacity: [0, 0.85, 0.7], scaleY: 1 }}
+          transition={{ duration: 3, ease: "easeOut" }}
+          style={{ transformOrigin: "top center", width: 220, height: "70vh" }}
+        >
+          <div
+            className="w-full h-full"
+            style={{
+              background:
+                "linear-gradient(to bottom, oklch(0.98 0.06 85 / 0.55), oklch(0.95 0.18 85 / 0.22) 60%, transparent)",
+              filter: "blur(14px)",
+              clipPath: "polygon(42% 0%, 58% 0%, 78% 100%, 22% 100%)",
+            }}
+          />
+        </motion.div>
+      )}
+
+      {/* tiny star-heart constellation between them */}
+      {stage >= 2 && stage <= 5 && (
+        <motion.svg
+          viewBox="0 0 100 90"
+          className="absolute left-1/2 top-[34%] -translate-x-1/2 pointer-events-none z-[16]"
+          width="120"
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: [0, 1, 0.9], scale: 1 }}
+          transition={{ duration: 2.6, delay: 1.4 }}
+          style={{ filter: "drop-shadow(0 0 18px oklch(0.95 0.18 85 / 0.9))" }}
+        >
+          {[
+            [50, 18], [38, 28], [62, 28], [28, 40], [72, 40],
+            [34, 54], [66, 54], [44, 64], [56, 64], [50, 74],
+          ].map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y} r="1.6" fill="oklch(0.98 0.05 85)">
+              <animate attributeName="opacity" values="0.3;1;0.3" dur="2.4s" begin={`${i * 0.15}s`} repeatCount="indefinite" />
+            </circle>
+          ))}
+        </motion.svg>
+      )}
+
       {/* Quote layer — clearly above characters, single line at a time */}
       <AnimatePresence mode="wait">
         {showActiveQuote && (
