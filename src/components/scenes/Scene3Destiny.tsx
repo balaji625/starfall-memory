@@ -24,16 +24,20 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     const t: any[] = [];
     const beat = setInterval(() => audio.heartbeat(0.6), 1100);
-    t.push(setTimeout(() => setStage(1), 2400));                    // start walking
-    t.push(setTimeout(() => { setStage(2); audio.chime(523); }, 8200)); // they stop · 2s eye contact
-    t.push(setTimeout(() => setStage(3), 10400));                   // quote 1
-    t.push(setTimeout(() => setStage(4), 14200));                   // quote 2
-    t.push(setTimeout(() => setStage(5), 18000));                   // quote 3
-    t.push(setTimeout(() => {                                       // handshake + bloom
+    // Longer, breathing title card — no rush.
+    t.push(setTimeout(() => audio.chime(440), 600));
+    t.push(setTimeout(() => audio.chime(523), 2000));
+    t.push(setTimeout(() => audio.chime(660), 3600));
+    t.push(setTimeout(() => setStage(1), 6800));                    // start walking
+    t.push(setTimeout(() => { setStage(2); audio.chime(523); }, 12600));
+    t.push(setTimeout(() => setStage(3), 14800));
+    t.push(setTimeout(() => setStage(4), 18600));
+    t.push(setTimeout(() => setStage(5), 22400));
+    t.push(setTimeout(() => {
       setStage(6); setBurst(true);
       audio.chime(880); audio.sparkle();
-    }, 22000));
-    t.push(setTimeout(() => setStage(7), 24500));                   // reveal continue
+    }, 26400));
+    t.push(setTimeout(() => setStage(7), 28900));
     return () => { t.forEach(clearTimeout); clearInterval(beat); };
   }, []);
 
@@ -64,16 +68,130 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
         ))}
       </div>
 
+      {/* ─── CINEMATIC TITLE CARD (stage 0) ─────────────────────── */}
       <AnimatePresence>
         {stage === 0 && (
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }} className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <div className="font-display text-6xl md:text-8xl text-shimmer tracking-widest">10 · 06 · 2023</div>
-              <div className="mt-4 font-script text-2xl text-[oklch(0.9_0.1_80)]">destiny written</div>
-            </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 1.4 } }}
+            transition={{ duration: 1.4 }}
+            className="absolute inset-0 flex flex-col items-center justify-center px-6 z-20"
+          >
+            {/* soft radial vignette behind text */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{ background: "radial-gradient(ellipse at center, oklch(0.12 0.06 285 / 0.55), transparent 65%)" }}
+            />
+
+            {/* swirling stars + soft light rays */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} transition={{ duration: 3 }}
+              style={{
+                background:
+                  "conic-gradient(from 200deg at 50% 40%, transparent, oklch(0.95 0.15 85 / 0.08) 30%, transparent 50%, oklch(0.85 0.12 320 / 0.06) 70%, transparent)",
+                filter: "blur(40px)",
+              }}
+            />
+            <FloatingParticles count={18} />
+
+            {/* CHAPTER LABEL */}
+            <motion.div
+              initial={{ opacity: 0, y: -10, letterSpacing: "0.2em" }}
+              animate={{ opacity: 1, y: 0, letterSpacing: "0.6em" }}
+              transition={{ duration: 1.6, ease: "easeOut" }}
+              className="relative font-display text-[11px] md:text-xs text-[oklch(0.92_0.08_85)]/80 mb-7"
+              style={{ textShadow: "0 0 20px oklch(0.95 0.18 85 / 0.5)" }}
+            >
+              ✦&nbsp;&nbsp;CHAPTER&nbsp;&nbsp;03&nbsp;&nbsp;✦
+            </motion.div>
+
+            {/* MAIN TITLE — luxury serif, cinematic spacing */}
+            <motion.h2
+              initial={{ opacity: 0, y: 26, filter: "blur(14px)" }}
+              animate={{ opacity: 1, y: [0, -4, 0], filter: "blur(0px)" }}
+              transition={{
+                opacity: { duration: 2.4, ease: "easeOut" },
+                filter: { duration: 2.4, ease: "easeOut" },
+                y: { duration: 6, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 2.4 },
+              }}
+              className="relative font-display text-shimmer text-center leading-[1.05]"
+              style={{
+                fontSize: "clamp(2.4rem, 7vw, 5.5rem)",
+                letterSpacing: "0.28em",
+                paddingLeft: "0.28em",
+                textShadow:
+                  "0 0 40px oklch(0.95 0.18 85 / 0.55), 0 0 80px oklch(0.95 0.18 85 / 0.25), 0 2px 0 oklch(0 0 0 / 0.4)",
+              }}
+            >
+              DESTINY&nbsp;&nbsp;WRITTEN
+            </motion.h2>
+
+            {/* hairline divider */}
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ delay: 1.6, duration: 1.6, ease: "easeOut" }}
+              className="mt-6 h-px w-40 origin-center"
+              style={{
+                background:
+                  "linear-gradient(to right, transparent, oklch(0.95 0.18 85 / 0.85), transparent)",
+                boxShadow: "0 0 12px oklch(0.95 0.18 85 / 0.6)",
+              }}
+            />
+
+            {/* SUBTITLE */}
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.4, duration: 1.8 }}
+              className="mt-6 font-display italic text-base md:text-xl text-white/75 tracking-wide text-center"
+              style={{ textShadow: "0 0 18px oklch(0.95 0.18 85 / 0.35)" }}
+            >
+              🌙&nbsp; "Two paths. One moment. One story."
+            </motion.div>
+
+            {/* GLASSMORPHISM DATE CARD */}
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 3.6, duration: 2, ease: "easeOut" }}
+              className="mt-12 px-10 py-5 rounded-2xl backdrop-blur-xl border border-white/15 max-w-md mx-auto"
+              style={{
+                background:
+                  "linear-gradient(135deg, oklch(0.16 0.08 320 / 0.45), oklch(0.1 0.05 280 / 0.35))",
+                boxShadow:
+                  "0 0 80px oklch(0.95 0.18 85 / 0.22), inset 0 1px 0 oklch(1 0 0 / 0.18)",
+              }}
+            >
+              <div className="text-[9px] tracking-[0.55em] font-display text-white/55 text-center mb-2">
+                THE DAY DESTINY ARRIVED
+              </div>
+              <div
+                className="font-display text-shimmer text-center"
+                style={{
+                  fontSize: "clamp(1.1rem, 2.4vw, 1.6rem)",
+                  letterSpacing: "0.35em",
+                  paddingLeft: "0.35em",
+                  textShadow: "0 0 22px oklch(0.95 0.18 85 / 0.7)",
+                }}
+              >
+                ✨&nbsp; 10 • JULY • 2023 &nbsp;✨
+              </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 4.8, duration: 1.6 }}
+                className="mt-3 font-display italic text-xs md:text-sm text-white/70 text-center"
+              >
+                🤍 "The day destiny quietly arrived."
+              </motion.div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
 
       {/* Characters approaching slowly, then standing still */}
       {stage >= 1 && (
@@ -95,6 +213,49 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
             <Boy walking={stage < 2} facing="left" />
           </motion.div>
         </div>
+      )}
+
+      {/* WOW — moonlight beam falling between the two characters once they stop */}
+      {stage >= 2 && stage <= 5 && (
+        <motion.div
+          className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none z-[15]"
+          initial={{ opacity: 0, scaleY: 0.4 }}
+          animate={{ opacity: [0, 0.85, 0.7], scaleY: 1 }}
+          transition={{ duration: 3, ease: "easeOut" }}
+          style={{ transformOrigin: "top center", width: 220, height: "70vh" }}
+        >
+          <div
+            className="w-full h-full"
+            style={{
+              background:
+                "linear-gradient(to bottom, oklch(0.98 0.06 85 / 0.55), oklch(0.95 0.18 85 / 0.22) 60%, transparent)",
+              filter: "blur(14px)",
+              clipPath: "polygon(42% 0%, 58% 0%, 78% 100%, 22% 100%)",
+            }}
+          />
+        </motion.div>
+      )}
+
+      {/* tiny star-heart constellation between them */}
+      {stage >= 2 && stage <= 5 && (
+        <motion.svg
+          viewBox="0 0 100 90"
+          className="absolute left-1/2 top-[34%] -translate-x-1/2 pointer-events-none z-[16]"
+          width="120"
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: [0, 1, 0.9], scale: 1 }}
+          transition={{ duration: 2.6, delay: 1.4 }}
+          style={{ filter: "drop-shadow(0 0 18px oklch(0.95 0.18 85 / 0.9))" }}
+        >
+          {[
+            [50, 18], [38, 28], [62, 28], [28, 40], [72, 40],
+            [34, 54], [66, 54], [44, 64], [56, 64], [50, 74],
+          ].map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y} r="1.6" fill="oklch(0.98 0.05 85)">
+              <animate attributeName="opacity" values="0.3;1;0.3" dur="2.4s" begin={`${i * 0.15}s`} repeatCount="indefinite" />
+            </circle>
+          ))}
+        </motion.svg>
       )}
 
       {/* Quote layer — clearly above characters, single line at a time */}
