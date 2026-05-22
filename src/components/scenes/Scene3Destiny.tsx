@@ -18,8 +18,21 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
   const [stage, setStage] = useState(0);
   const [burst, setBurst] = useState(false);
   const [replays, setReplays] = useState(0);
+  const [wowFx, setWowFx] = useState(false);
+  const wowFiredRef = useRef(false);
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
+
+  // Reliable 5s-on-scene trigger for moonbeam + heart-stars — exactly once per visit.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      if (wowFiredRef.current) return;
+      wowFiredRef.current = true;
+      setWowFx(true);
+      audio.chime(720);
+    }, 5000);
+    return () => clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     const t: any[] = [];
