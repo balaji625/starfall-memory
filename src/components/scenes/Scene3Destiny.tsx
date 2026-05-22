@@ -18,8 +18,21 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
   const [stage, setStage] = useState(0);
   const [burst, setBurst] = useState(false);
   const [replays, setReplays] = useState(0);
+  const [wowFx, setWowFx] = useState(false);
+  const wowFiredRef = useRef(false);
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
+
+  // Reliable 5s-on-scene trigger for moonbeam + heart-stars — exactly once per visit.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      if (wowFiredRef.current) return;
+      wowFiredRef.current = true;
+      setWowFx(true);
+      audio.chime(720);
+    }, 5000);
+    return () => clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     const t: any[] = [];
@@ -216,7 +229,7 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
       )}
 
       {/* WOW — moonlight beam falling between the two characters once they stop */}
-      {stage >= 2 && stage <= 5 && (
+      {wowFx && stage <= 5 && (
         <motion.div
           className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none z-[15]"
           initial={{ opacity: 0, scaleY: 0.4 }}
@@ -237,7 +250,7 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
       )}
 
       {/* tiny star-heart constellation between them */}
-      {stage >= 2 && stage <= 5 && (
+      {wowFx && stage <= 5 && (
         <motion.svg
           viewBox="0 0 100 90"
           className="absolute left-1/2 top-[34%] -translate-x-1/2 pointer-events-none z-[16]"
