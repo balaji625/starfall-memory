@@ -250,7 +250,7 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
       )}
 
       {/* tiny star-heart constellation between them */}
-      {stage >= 2 && stage <= 5 && (
+      {wowFx && stage <= 5 && (
         <motion.svg
           viewBox="0 0 100 90"
           className="absolute left-1/2 top-[34%] -translate-x-1/2 pointer-events-none z-[16]"
