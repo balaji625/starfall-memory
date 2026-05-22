@@ -79,6 +79,7 @@ export function Experience() {
 
       <AnimatePresence mode="wait">
         {stage === "gate" && <Gate key="gate" onStart={start} />}
+        {stage === "welcome" && <WelcomeUniverse key="welcome" onEnter={enterUniverse} />}
         {stage === 1 && <Scene1Birth key={`s1-${replay}`} variant={replay % 3} onDone={() => next(1, 2)} />}
         {stage === 2 && <Scene2Growing key={`s2-${replay}`} onDone={() => next(2, 3)} />}
         {stage === 3 && <Scene3Destiny key={`s3-${replay}`} onDone={() => next(3, 4)} />}
