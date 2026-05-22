@@ -16,8 +16,9 @@ import { SecretOverlays } from "./SecretOverlays";
 import { ChapterCard, FilmGrain, GodRays, LensFlare, Parallax3D, useChapterCard } from "./Cinematic3D";
 import { MemoryReel, type MemoryId } from "./MemoryReel";
 import { WowMoments } from "./WowMoments";
+import { WelcomeUniverse } from "./WelcomeUniverse";
 
-type Stage = "gate" | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type Stage = "gate" | "welcome" | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 const CHAPTERS: Record<string, { t: string; s?: string }> = {
   "1": { t: "A Soul Arrives", s: "the night the stars learned her name" },
@@ -40,6 +41,11 @@ export function Experience() {
     setUnlocked((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
 
   const start = () => {
+    audio.unlock();
+    setStage("welcome");
+  };
+
+  const enterUniverse = () => {
     audio.unlock();
     setStage(1);
   };
@@ -65,7 +71,7 @@ export function Experience() {
   return (
     <div className="fixed inset-0 select-none overflow-hidden">
       {/* Aurora atmosphere — sits behind everything */}
-      {stage !== "gate" && (
+      {stage !== "gate" && stage !== "welcome" && (
         <div className="pointer-events-none absolute inset-0 z-[1]">
           <div className="aurora-bg absolute inset-0" />
         </div>
@@ -73,6 +79,7 @@ export function Experience() {
 
       <AnimatePresence mode="wait">
         {stage === "gate" && <Gate key="gate" onStart={start} />}
+        {stage === "welcome" && <WelcomeUniverse key="welcome" onEnter={enterUniverse} />}
         {stage === 1 && <Scene1Birth key={`s1-${replay}`} variant={replay % 3} onDone={() => next(1, 2)} />}
         {stage === 2 && <Scene2Growing key={`s2-${replay}`} onDone={() => next(2, 3)} />}
         {stage === 3 && <Scene3Destiny key={`s3-${replay}`} onDone={() => next(3, 4)} />}
@@ -84,7 +91,7 @@ export function Experience() {
       </AnimatePresence>
 
       {/* Cinematic atmosphere layers — non-interactive, above scenes */}
-      {stage !== "gate" && (
+      {stage !== "gate" && stage !== "welcome" && (
         <>
           <Parallax3D intensity={10}>
             <GodRays origin="50% 25%" />
@@ -105,7 +112,7 @@ export function Experience() {
       )}
 
       {/* HUD */}
-      {stage !== "gate" && (
+      {stage !== "gate" && stage !== "welcome" && (
         <div className="absolute top-4 left-4 z-[60] flex items-center gap-3">
           <button
             onClick={() => setMuted((m) => !m)}
@@ -127,15 +134,15 @@ export function Experience() {
         </div>
       )}
 
-      {stage !== "gate" && (
+      {stage !== "gate" && stage !== "welcome" && (
         <div className="absolute top-4 right-4 z-[60] text-[10px] font-display tracking-[0.3em] text-white/40">
           chapter {String(stage).padStart(2, "0")} / 08
         </div>
       )}
 
-      {stage !== "gate" && <SecretOverlays />}
-      {stage !== "gate" && <MemoryReel unlocked={unlocked} variant={replay} />}
-      {stage !== "gate" && <WowMoments stage={stage} />}
+      {stage !== "gate" && stage !== "welcome" && <SecretOverlays />}
+      {stage !== "gate" && stage !== "welcome" && <MemoryReel unlocked={unlocked} variant={replay} />}
+      {stage !== "gate" && stage !== "welcome" && <WowMoments stage={stage} />}
     </div>
   );
 }
