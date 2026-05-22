@@ -229,7 +229,7 @@ export function Scene3Destiny({ onDone }: { onDone: () => void }) {
       )}
 
       {/* WOW — moonlight beam falling between the two characters once they stop */}
-      {stage >= 2 && stage <= 5 && (
+      {wowFx && stage <= 5 && (
         <motion.div
           className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none z-[15]"
           initial={{ opacity: 0, scaleY: 0.4 }}
