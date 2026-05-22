@@ -71,7 +71,7 @@ export function Experience() {
   return (
     <div className="fixed inset-0 select-none overflow-hidden">
       {/* Aurora atmosphere — sits behind everything */}
-      {stage !== "gate" && (
+      {stage !== "gate" && stage !== "welcome" && (
         <div className="pointer-events-none absolute inset-0 z-[1]">
           <div className="aurora-bg absolute inset-0" />
         </div>
@@ -90,7 +90,7 @@ export function Experience() {
       </AnimatePresence>
 
       {/* Cinematic atmosphere layers — non-interactive, above scenes */}
-      {stage !== "gate" && (
+      {stage !== "gate" && stage !== "welcome" && (
         <>
           <Parallax3D intensity={10}>
             <GodRays origin="50% 25%" />
@@ -111,7 +111,7 @@ export function Experience() {
       )}
 
       {/* HUD */}
-      {stage !== "gate" && (
+      {stage !== "gate" && stage !== "welcome" && (
         <div className="absolute top-4 left-4 z-[60] flex items-center gap-3">
           <button
             onClick={() => setMuted((m) => !m)}
@@ -133,15 +133,15 @@ export function Experience() {
         </div>
       )}
 
-      {stage !== "gate" && (
+      {stage !== "gate" && stage !== "welcome" && (
         <div className="absolute top-4 right-4 z-[60] text-[10px] font-display tracking-[0.3em] text-white/40">
           chapter {String(stage).padStart(2, "0")} / 08
         </div>
       )}
 
-      {stage !== "gate" && <SecretOverlays />}
-      {stage !== "gate" && <MemoryReel unlocked={unlocked} variant={replay} />}
-      {stage !== "gate" && <WowMoments stage={stage} />}
+      {stage !== "gate" && stage !== "welcome" && <SecretOverlays />}
+      {stage !== "gate" && stage !== "welcome" && <MemoryReel unlocked={unlocked} variant={replay} />}
+      {stage !== "gate" && stage !== "welcome" && <WowMoments stage={stage} />}
     </div>
   );
 }
