@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "🌙 VijayaVerse — A Universe For Her" },
+      { name: "description", content: "Not just a birthday wish... a magical universe of memories, emotions, stars, and destiny created for Vijaya. 💖🌌" },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "🌙 VijayaVerse — A Universe For Her" },
+      { property: "og:description", content: "Not just a birthday wish... a magical universe of memories, emotions, stars, and destiny created for Vijaya. 💖🌌" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "🌙 VijayaVerse — A Universe For Her" },
+      { name: "twitter:description", content: "Not just a birthday wish... a magical universe of memories, emotions, stars, and destiny created for Vijaya. 💖🌌" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/XIX0EgbD5Wd4hx9uOlPEq61TQ7K2/social-images/social-1779515680355-ChatGPT_Image_May_23,_2026,_11_24_33_AM.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/XIX0EgbD5Wd4hx9uOlPEq61TQ7K2/social-images/social-1779515680355-ChatGPT_Image_May_23,_2026,_11_24_33_AM.webp" },
     ],
     links: [
       {
